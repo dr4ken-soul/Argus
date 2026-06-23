@@ -11,13 +11,8 @@ export function useZeroGCompute() {
    * @param vaultContext - Relevant past vault entries
    */
   async function query(message: string, history: Message[], vaultContext: VaultEntry[]): Promise<string> {
-    const apiKey = import.meta.env.VITE_ZEROG_COMPUTE_API_KEY
     const model = import.meta.env.VITE_ZEROG_COMPUTE_MODEL || 'qwen2.5-omni'
     const system = buildSystemPrompt(vaultContext)
-
-    if (!apiKey) {
-      return buildLocalCritique(message, history, vaultContext)
-    }
 
     const controller = new AbortController()
     const timeout = window.setTimeout(() => controller.abort(), 30000)
@@ -44,6 +39,9 @@ export function useZeroGCompute() {
 
       if (!response.ok) {
         const details = (await response.text()).slice(0, 240)
+        if (details.includes('0G Compute is not configured')) {
+          return buildLocalCritique(message, history, vaultContext)
+        }
         throw new Error(details || 'Could not reach 0G Compute. Check the endpoint and try again')
       }
 

@@ -19,8 +19,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
     return
   }
 
-  const endpoint = process.env.VITE_ZEROG_COMPUTE_URL?.replace(/\/$/, '')
-  const apiKey = process.env.VITE_ZEROG_COMPUTE_API_KEY
+  const endpoint = (process.env.ZEROG_COMPUTE_URL ?? process.env.VITE_ZEROG_COMPUTE_URL)?.replace(/\/$/, '')
+  const apiKey = process.env.ZEROG_COMPUTE_API_KEY ?? process.env.VITE_ZEROG_COMPUTE_API_KEY
 
   if (!endpoint || !apiKey) {
     response.status(500).json({ error: '0G Compute is not configured' })
